@@ -10,13 +10,17 @@ public class FracCalc {
 
 	public static void main(String[] args) {
 		Scanner userInput = new Scanner(System.in);
-		System.out.print("Please enter your fraction equation: ");
-		String str = userInput.nextLine();
+		String str = "";
 		while (!str.equals("quit")) {
-			System.out.println(produceAnswer(str));
-			System.out.print("Enter another fraction problem(type quit if you wish to exit): ");
+			System.out.print("Please enter your equation: ");
 			str = userInput.nextLine();
+			if (!str.equals("quit")) {
+				System.out.println(produceAnswer(str));
+			}
+
 		}
+		userInput.close();
+		System.out.print("Fraction Calculator is now closed. ");
 	}
 
 	// TODO: Read the input from the user and call produceAnswer with an equation
@@ -50,18 +54,95 @@ public class FracCalc {
 
 			}
 		}
+		String firstOperandWhole = findWhole(firstOperand);
+		String firstOperandNum = findNum(firstOperand);
+		String firstOperandDenom = findDenom(firstOperand);
 
 		String secondOperandWhole = findWhole(secondOperand);
 		String secondOperandNum = findNum(secondOperand);
 		String secondOperandDenom = findDenom(secondOperand);
 
-		String chk2Answer = "whole:" + secondOperandWhole + " numerator:" + secondOperandNum + " denominator:"
-				+ secondOperandDenom;
+		int firstWhole = Integer.parseInt(firstOperandWhole);
+		int firstNum = Integer.parseInt(firstOperandNum);
+		int firstDenom = Integer.parseInt(firstOperandDenom);
+		int secondWhole = Integer.parseInt(secondOperandWhole);
+		int secondNum = Integer.parseInt(secondOperandNum);
+		int secondDenom = Integer.parseInt(secondOperandDenom);
 
-		return chk2Answer;
+		firstNum += firstDenom * Math.abs(firstWhole);
+		if (firstWhole < 0) {
+			firstNum *= -1;
+		}
+
+		secondNum += secondDenom * Math.abs(secondWhole);
+		if (secondWhole < 0) {
+			secondNum *= -1;
+
+		}
+
+		int finalWhole = 0;
+		int finalNum = 0;
+		int finalDenom = 0;
+
+		if (operator.equals("+")) {
+			firstNum *= secondDenom;
+			secondNum *= firstDenom;
+
+			int tempDenom = firstDenom;
+			firstDenom *= secondDenom;
+			secondDenom *= tempDenom;
+
+			finalNum = firstNum + secondNum;
+			finalDenom = firstDenom;
+
+		}
+		if (operator.equals("-")) {
+			firstNum *= secondDenom;
+			secondNum *= firstDenom;
+
+			int tempDenom = firstDenom;
+			firstDenom *= secondDenom;
+			secondDenom *= tempDenom;
+
+			finalNum = firstNum - secondNum;
+			finalDenom = secondDenom;
+		}
+		if (operator.contentEquals("*")) {
+			finalNum = firstNum * secondNum;
+			finalDenom = firstDenom * secondDenom;
+		}
+		if (operator.contentEquals("/")) {
+			finalNum = firstNum * secondDenom;
+			finalDenom = firstDenom * secondNum;
+		}
+
+		while (finalNum / finalDenom >= 1) {
+			finalNum -= finalDenom;
+			finalWhole += 1;
+		}
+
+		while (finalNum / finalDenom <= -1) {
+			finalNum += finalDenom;
+			finalWhole -= 1;
+		}
+
+		if (finalWhole != 0) {
+			finalNum = Math.abs(finalNum);
+			finalDenom = Math.abs(finalDenom);
+
+		}
+		if (finalWhole == 0) {
+			return finalNum + "/" + finalDenom;
+
+		} else if (finalNum == 0 && finalDenom == 1) {
+			return finalWhole + "";
+		} else {
+			return finalWhole + "_" + finalNum + "/" + finalDenom;
+		}
 
 		// TODO: Fill in the space below with any helper methods that you think you will
 		// need
+
 	}
 
 	public static String findWhole(String str) {
