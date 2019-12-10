@@ -20,7 +20,7 @@ public class FracCalc {
 
 		}
 		userInput.close();
-		System.out.print("Fraction Calculator is now closed. ");
+
 	}
 
 	// TODO: Read the input from the user and call produceAnswer with an equation
@@ -38,138 +38,189 @@ public class FracCalc {
 	// e.g. return ==> "1_1/4"
 	public static String produceAnswer(String str) {
 		// TODO: Implement this function to produce the solution to the input
+		int firstSpace = str.indexOf(" "); // find the index of the first space
+		String firstOperand = str.substring(0, firstSpace); // substring of beginning to space before operator
 
-		String firstOperand = "";
-		String operator = "";
-		String secondOperand = "";
-		int i = 0;
-		while (firstOperand == "") {
-			if (str.charAt(i) == (' ')) {
-				firstOperand = str.substring(0, i);
-				operator = str.substring(i + 1, i + 2);
-				secondOperand = str.substring(i + 3, str.length());
+		String firstString = str.substring(firstSpace + 1, str.length());
+		int secondSpace = firstString.indexOf(" "); // find the index of the second space
+		String firstOperator = firstString.substring(0, secondSpace);
 
+		String secondString = firstString.substring(secondSpace, firstString.length());
+		String secondOperand = secondString.substring(secondSpace, secondString.length()); // substring of space after
+																							// operator to the end
+
+		// Multiple operations
+		while (secondOperand.indexOf(" ") > 0) {
+			int thirdSpace = secondOperand.indexOf(" ");
+			String value = secondOperand.substring(0, thirdSpace);
+			String thirdString = secondOperand.substring(thirdSpace + 1, secondOperand.length());
+			int fourthSpace = thirdString.indexOf(" ");
+			String secondOperator = thirdString.substring(fourthSpace - 1, fourthSpace);
+			secondOperand = thirdString.substring(fourthSpace + 1, thirdString.length());
+			String newEquation = firstOperand + " " + firstOperator + " " + value;
+			firstOperand = produceAnswer(newEquation);
+			firstOperator = secondOperator;
+		}
+
+		// Parsing fractions- First Operand
+		String firstWhole = firstOperand; // hi_
+		String firstNum = "";
+		String firstDenom = "";
+		int firstSlash = firstOperand.indexOf("/");
+
+		if (firstSlash > 0) {
+			int firstUnderscore = firstOperand.indexOf("_");
+			if (firstUnderscore > 0) {
+				firstWhole = firstOperand.substring(0, firstUnderscore);
+				firstNum = firstOperand.substring(firstUnderscore + 1, firstSlash);
+				firstDenom = firstOperand.substring(firstSlash + 1, firstOperand.length());
 			} else {
-				i++;
+				firstWhole = "0";
+				firstNum = firstOperand.substring(firstUnderscore + 1, firstSlash);
+				firstDenom = firstOperand.substring(firstSlash + 1, firstOperand.length());
+			}
 
+		} else {
+			firstNum = "0";
+			firstDenom = "1";
+		}
+
+		// Parsing fractions- Second Operand
+		String secondWhole = secondOperand;
+		String secondNum = "";
+		String secondDenom = "";
+		int secondSlash = secondOperand.indexOf("/");
+
+		if (secondSlash > 0) {
+			int secondUnderscore = secondOperand.indexOf("_");
+			if (secondUnderscore > 0) {
+				secondWhole = secondOperand.substring(0, secondUnderscore);
+				secondNum = secondOperand.substring(secondUnderscore + 1, secondSlash);
+				secondDenom = secondOperand.substring(secondSlash + 1, secondOperand.length());
+			} else {
+				secondWhole = "0";
+				secondNum = secondOperand.substring(secondUnderscore + 1, secondSlash);
+				secondDenom = secondOperand.substring(secondSlash + 1, secondOperand.length());
+			}
+
+		} else {
+			secondNum = "0";
+			secondDenom = "1";
+		}
+		// this is changing string into integers.
+		int intFirstWhole = Integer.parseInt(firstWhole);
+		int intFirstNum = Integer.parseInt(firstNum);
+		int intFirstDenom = Integer.parseInt(firstDenom);
+
+		int intSecondWhole = Integer.parseInt(secondWhole);
+		int intSecondNum = Integer.parseInt(secondNum);
+		int intSecondDenom = Integer.parseInt(secondDenom);
+
+		// converts to an improper fraction
+		intFirstNum += intFirstDenom * Math.abs(intFirstWhole);
+		if (intFirstWhole < 0) {
+			intFirstNum *= -1;
+		}
+
+		intSecondNum += intSecondDenom * Math.abs(intSecondWhole);
+		if (intSecondWhole < 0) {
+			intSecondNum *= -1;
+
+		}
+
+		int intFinalWhole = 0;
+		int intFinalNum = 0;
+		int intFinalDenom = 0;
+
+		// invalid if user inputs 0 as denom
+		if (intFirstDenom == 0 || intSecondDenom == 0) {
+			return "Invalid input";
+
+		}
+		// if user inputs wrong syntax, invalid...
+		if (firstOperator.length() > 1) {
+			return "Invalid input";
+		}
+		// add.calculation
+		if (firstOperator.equals("+")) {
+			intFirstNum *= intSecondDenom;
+			intSecondNum *= intFirstDenom;
+			intFinalNum = intFirstNum + intSecondNum;
+			intFinalDenom = intFirstDenom * intSecondDenom;
+
+		}
+		// subt.calculation
+		if (firstOperator.equals("-")) {
+			intFirstNum *= intSecondDenom;
+			intSecondNum *= intFirstDenom;
+			intFinalNum = intFirstNum - intSecondNum;
+			intFinalDenom = intFirstDenom * intSecondDenom;
+		}
+		// mult.calculation
+		if (firstOperator.equals("*")) {
+			intFinalNum = intFirstNum * intSecondNum;
+			intFinalDenom = intFirstDenom * intSecondDenom;
+			if (intFirstNum == 0 || intSecondNum == 0) {
+				return 0 + "";
 			}
 		}
-		String firstOperandWhole = findWhole(firstOperand);
-		String firstOperandNum = findNum(firstOperand);
-		String firstOperandDenom = findDenom(firstOperand);
 
-		String secondOperandWhole = findWhole(secondOperand);
-		String secondOperandNum = findNum(secondOperand);
-		String secondOperandDenom = findDenom(secondOperand);
-
-		int firstWhole = Integer.parseInt(firstOperandWhole);
-		int firstNum = Integer.parseInt(firstOperandNum);
-		int firstDenom = Integer.parseInt(firstOperandDenom);
-		int secondWhole = Integer.parseInt(secondOperandWhole);
-		int secondNum = Integer.parseInt(secondOperandNum);
-		int secondDenom = Integer.parseInt(secondOperandDenom);
-
-		firstNum += firstDenom * Math.abs(firstWhole);
-		if (firstWhole < 0) {
-			firstNum *= -1;
+		// div. calculation
+		if (firstOperator.equals("/")) {
+			intFinalNum = intFirstNum * intSecondDenom;
+			intFinalDenom = intFirstDenom * intSecondNum;
 		}
 
-		secondNum += secondDenom * Math.abs(secondWhole);
-		if (secondWhole < 0) {
-			secondNum *= -1;
+		// make num negative instead of denom
+		if (intFinalDenom < 0 && intFinalNum > 0) {
+			intFinalDenom *= -1;
+			intFinalNum *= -1;
+		}
+
+		// convert to a mixed fraction if num is positive.
+		while (intFinalNum / intFinalDenom >= 1) {
+			intFinalNum -= intFinalDenom;
+			intFinalWhole += 1;
+		}
+
+		// convert to a mixed fraction if num is negative.
+		while (intFinalNum / intFinalDenom <= -1) {
+			intFinalNum += intFinalDenom;
+			intFinalWhole -= 1;
+		}
+
+		// remove the sign from num and denom if there is whole num.
+		if (intFinalWhole != 0) {
+			intFinalNum = Math.abs(intFinalNum);
+			intFinalDenom = Math.abs(intFinalDenom);
 
 		}
 
-		int finalWhole = 0;
-		int finalNum = 0;
-		int finalDenom = 0;
-
-		if (operator.equals("+")) {
-			firstNum *= secondDenom;
-			secondNum *= firstDenom;
-
-			int tempDenom = firstDenom;
-			firstDenom *= secondDenom;
-			secondDenom *= tempDenom;
-
-			finalNum = firstNum + secondNum;
-			finalDenom = firstDenom;
-
+		// reduce fraction
+		int gcd = 1;
+		for (int j = 1; j <= Math.abs(intFinalNum) && j <= Math.abs(intFinalDenom); j++) {
+			if (intFinalNum % j == 0 && intFinalDenom % j == 0)
+				gcd = j;
 		}
-		if (operator.equals("-")) {
-			firstNum *= secondDenom;
-			secondNum *= firstDenom;
+		intFinalNum /= gcd;
+		intFinalDenom /= gcd;
 
-			int tempDenom = firstDenom;
-			firstDenom *= secondDenom;
-			secondDenom *= tempDenom;
-
-			finalNum = firstNum - secondNum;
-			finalDenom = secondDenom;
-		}
-		if (operator.contentEquals("*")) {
-			finalNum = firstNum * secondNum;
-			finalDenom = firstDenom * secondDenom;
-		}
-		if (operator.contentEquals("/")) {
-			finalNum = firstNum * secondDenom;
-			finalDenom = firstDenom * secondNum;
-		}
-
-		while (finalNum / finalDenom >= 1) {
-			finalNum -= finalDenom;
-			finalWhole += 1;
-		}
-
-		while (finalNum / finalDenom <= -1) {
-			finalNum += finalDenom;
-			finalWhole -= 1;
-		}
-
-		if (finalWhole != 0) {
-			finalNum = Math.abs(finalNum);
-			finalDenom = Math.abs(finalDenom);
-
-		}
-		if (finalWhole == 0) {
-			return finalNum + "/" + finalDenom;
-
-		} else if (finalNum == 0 && finalDenom == 1) {
-			return finalWhole + "";
-		} else {
-			return finalWhole + "_" + finalNum + "/" + finalDenom;
-		}
-
-		// TODO: Fill in the space below with any helper methods that you think you will
-		// need
-
-	}
-
-	public static String findWhole(String str) {
-		if (str.contains("_")) {
-			return str.substring(0, str.indexOf('_'));
-		} else if (str.contains("/")) {
-			return "0";
-		} else
-			return str;
-	}
-
-	public static String findNum(String str) {
-		if (str.contains("_")) {
-			return str.substring(str.indexOf('_') + 1, str.indexOf('/'));
-		} else if (str.contains("/")) {
-			return str.substring(0, str.indexOf('/'));
+		// final output!
+		if (intFinalWhole == 0) {
+			if (intFinalNum == 0) {
+				return "0";
+			} else {
+				return intFinalNum + "/" + intFinalDenom;
+			}
+		} else if (intFinalNum == 0 || intFinalDenom == 1) {
+			return intFinalWhole + "";
 
 		} else {
-			return "0";
+			return intFinalWhole + "_" + intFinalNum + "/" + intFinalDenom;
 		}
+
 	}
 
-	public static String findDenom(String str) {
-		if (str.contains("/")) {
-			return str.substring(str.indexOf("/") + 1);
-		} else {
-			return "1";
-		}
-	}
 }
+// TODO: Fill in the space below with any helper methods that you think you will
+// need
