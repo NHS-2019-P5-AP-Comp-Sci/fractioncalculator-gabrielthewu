@@ -39,16 +39,15 @@ public class FracCalc {
 	// e.g. return ==> "1_1/4"
 	public static String produceAnswer(String str) {
 		// TODO: Implement this function to produce the solution to the input
-		int firstSpace = str.indexOf(" "); // find the index of the first space
-		String firstOperand = str.substring(0, firstSpace); // substring of beginning to space before operator
+		int firstSpace = str.indexOf(" "); 
+		String firstOperand = str.substring(0, firstSpace); 
 
 		String firstString = str.substring(firstSpace + 1, str.length());
-		int secondSpace = firstString.indexOf(" "); // find the index of the second space
+		int secondSpace = firstString.indexOf(" ");
 		String firstOperator = firstString.substring(0, secondSpace);
 
 		String secondString = firstString.substring(secondSpace, firstString.length());
-		String secondOperand = secondString.substring(secondSpace, secondString.length()); // substring of space after
-																							// operator to the end
+		String secondOperand = secondString.substring(secondSpace, secondString.length()); 
 
 		// Multiple operations
 		while (secondOperand.indexOf(" ") > 0) {
@@ -134,13 +133,22 @@ public class FracCalc {
 		int intFinalDenom = 0;
 
 		// invalid if user inputs 0 as denom
+		if (firstOperator.length() > 1) {
+			return "Invalid input";
+		}
 		if (intFirstDenom == 0 || intSecondDenom == 0) {
 			return "Invalid input";
 
 		}
 		// if user inputs wrong syntax, invalid...
-		if (firstOperator.length() > 1) {
-			return "Invalid input";
+		
+		
+		// subt.calculation
+		if (firstOperator.equals("-")) {
+			intFirstNum *= intSecondDenom;
+			intSecondNum *= intFirstDenom;
+			intFinalNum = intFirstNum - intSecondNum;
+			intFinalDenom = intFirstDenom * intSecondDenom;
 		}
 		// add.calculation
 		if (firstOperator.equals("+")) {
@@ -149,13 +157,6 @@ public class FracCalc {
 			intFinalNum = intFirstNum + intSecondNum;
 			intFinalDenom = intFirstDenom * intSecondDenom;
 
-		}
-		// subt.calculation
-		if (firstOperator.equals("-")) {
-			intFirstNum *= intSecondDenom;
-			intSecondNum *= intFirstDenom;
-			intFinalNum = intFirstNum - intSecondNum;
-			intFinalDenom = intFirstDenom * intSecondDenom;
 		}
 		// mult.calculation
 		if (firstOperator.equals("*")) {
@@ -177,6 +178,11 @@ public class FracCalc {
 			intFinalDenom *= -1;
 			intFinalNum *= -1;
 		}
+		// convert to a mixed fraction if num is negative.
+		while (intFinalNum / intFinalDenom <= -1) {
+			intFinalNum += intFinalDenom;
+			intFinalWhole -= 1;
+		}
 
 		// convert to a mixed fraction if num is positive.
 		while (intFinalNum / intFinalDenom >= 1) {
@@ -184,12 +190,7 @@ public class FracCalc {
 			intFinalWhole += 1;
 		}
 
-		// convert to a mixed fraction if num is negative.
-		while (intFinalNum / intFinalDenom <= -1) {
-			intFinalNum += intFinalDenom;
-			intFinalWhole -= 1;
-		}
-
+		
 		// remove the sign from num and denom if there is whole num.
 		if (intFinalWhole != 0) {
 			intFinalNum = Math.abs(intFinalNum);
