@@ -20,6 +20,7 @@ public class FracCalc {
 
 		}
 		userInput.close();
+		System.out.print("Frac Calc now closed!");
 
 	}
 
@@ -62,8 +63,8 @@ public class FracCalc {
 			firstOperator = secondOperator;
 		}
 
-		// Parsing fractions- First Operand
-		String firstWhole = firstOperand; // hi_
+		// FirstOperandParsed
+		String firstWhole = firstOperand; 
 		String firstNum = "";
 		String firstDenom = "";
 		int firstSlash = firstOperand.indexOf("/");
@@ -85,7 +86,7 @@ public class FracCalc {
 			firstDenom = "1";
 		}
 
-		// Parsing fractions- Second Operand
+		// SecondOperandParsed
 		String secondWhole = secondOperand;
 		String secondNum = "";
 		String secondDenom = "";
@@ -116,7 +117,7 @@ public class FracCalc {
 		int intSecondNum = Integer.parseInt(secondNum);
 		int intSecondDenom = Integer.parseInt(secondDenom);
 
-		// converts to an improper fraction
+		// converting to improper fraction
 		intFirstNum += intFirstDenom * Math.abs(intFirstWhole);
 		if (intFirstWhole < 0) {
 			intFirstNum *= -1;
@@ -196,7 +197,7 @@ public class FracCalc {
 
 		}
 
-		// reduce fraction
+		// reduce the fraction
 		int gcd = 1;
 		for (int j = 1; j <= Math.abs(intFinalNum) && j <= Math.abs(intFinalDenom); j++) {
 			if (intFinalNum % j == 0 && intFinalDenom % j == 0)
@@ -205,7 +206,7 @@ public class FracCalc {
 		intFinalNum /= gcd;
 		intFinalDenom /= gcd;
 
-		// final output!
+		// the final output!
 		if (intFinalWhole == 0) {
 			if (intFinalNum == 0) {
 				return "0";
